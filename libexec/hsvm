@@ -1,0 +1,94 @@
+#!/bin/bash
+
+set -e
+export -n CDPATH
+
+if [ "$1" = "--debug" ]; then
+    export HSVM_DEBUG=1
+    shift
+fi
+
+if [ -n "$HSVM_DEBUG" ]; then
+    export PS4='+ [${BASH_SOURCE##*/}:${LINENO}]'
+    set -x
+fi
+
+READLINK=$(type -p greadlink readlink | head -1)
+if [ -z "$READLINK" ]; then
+    echo "hsvm: cannot find readlink - are you missing GNU coreutils?" >&2
+    exit 1
+fi
+
+resolve_link() {
+    $READLINK "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+if [ -z "${HSVM_ROOT}" ]; then
+    HSVM_ROOT="${HOME}/.hsvm"
+else
+    HSVM_ROOT="${HSVM_ROOT%/}"
+fi
+
+export HSVM_ROOT
+
+if [ -z "${HSVM_DIR}" ]; then
+    HSVM_DIR="$(pwd)"
+else
+    cd "$HSVM_DIR" 2>/dev/null || {
+        echo "hsvm: cannot change working directory to \`$HSVM_DIR'"
+        exit 1
+    } >&2
+    HSVM_DIR="$(pwd)"
+    cd "$OLDPWD"
+fi
+export HSVM_DIR
+
+shopt -s nullglob
+
+bin_path="$(abs_dirname "$0")"
+for plugin_bin in "${HSVM_ROOT}/plugins/"*/bin; do
+    bin_path="${bin_path}:${plugin_bin}"
+done
+export PATH="${bin_path}:${PATH}"
+
+hook_path="${HSVM_HOOK_PATH}:${HSVM_ROOT}/hsvm.d:/usr/local/etc/hsvm.d:/etc/hsvm.d:/usr/lib/hsvm/hooks"
+for plugin_hook in "${HSVM_ROOT}/plugins/"*/etc/hsvm.d; do
+    hook_path="${hook_path}:${plugin_path}"
+done
+export HSVM_HOOK_PATH="$hook_path"
+
+shopt -u nullglob
+
+command="$1"
+case "$command" in
+"" | "-h" | "--help" )
+    echo -e "$(hsvm---version)\n$(hsvm-help)" >&2
+    ;;
+"-v" )
+    exec hsvm---version
+    ;;
+* )
+    command_path="$(command -v "hsvm-$command" || true)"
+    if [ -z "$command_path" ]; then
+        echo "hsvm: no such command \`$command'" >&2
+        exit 1
+    fi
+
+    shift 1
+    exec "$command_path" "$@"
+    ;;
+esac

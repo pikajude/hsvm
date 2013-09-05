@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Summary: Install a GHC, and maybe cabal-install.
+# Usage: hsvm install ghc-version
+
+set -e
+[ -n "$HSVM_DEBUG" ] && set -x
+
+version="$1"
+
+if [ -z "$version" ]; then
+  echo "usage: hsvm install ghc-version" >&2
+  exit 1
+fi
