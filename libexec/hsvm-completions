@@ -7,7 +7,7 @@ set -e
 
 case "$1" in
 install )
-  cat "${HSVM_DIR}/versions"
+  cat "$(dirname "$0")/../versions"
   ;;
 use | rm )
   for dir in "${GHCS_PATH}/"*; do

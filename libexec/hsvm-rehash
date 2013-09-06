@@ -14,7 +14,7 @@ normalize() {
 CURRENT_VERSION=
 
 if [ -s "${VERSION_FILE}" ]; then
-  CURRENT_VERSION="$(<"${_VERSION_FILE}")"
+  CURRENT_VERSION="$(<"${VERSION_FILE}")"
 else
   echo "hsvm: no version specified; try \`hsvm shell some-version'" >&2
   exit 1

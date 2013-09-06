@@ -4,6 +4,6 @@
 
 echo "set -e"
 echo "export PATH=\"${HSVM_ROOT}/shims:\${PATH}\""
-echo "source \"${HSVM_DIR}/completions/hsvm.zsh\""
+echo "source \"$(dirname "$0")/../completions/hsvm.zsh\""
 echo "hsvm rehash"
 echo "set +e"
