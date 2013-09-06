@@ -10,7 +10,7 @@ install )
   cat "${HSVM_DIR}/versions"
   ;;
 use | rm )
-  for dir in "${HSVM_ROOT}/ghcs/"*; do
+  for dir in "${GHCS_PATH}/"*; do
     echo "$(basename "$dir")"
   done
   ;;

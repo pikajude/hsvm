@@ -5,7 +5,7 @@
 set -e
 [ -n "$HSVM_DEBUG" ] && set -x
 
-[ -f "${HSVM_ROOT}/version" ] && CURRENT="$(<"${HSVM_ROOT}/version")"
+[ -s "${VERSION_FILE}" ] && CURRENT="$(<"${HSVM_ROOT}/version")"
 
 while IFS= read -d $'\0' -r dir ; do
   d="$(basename "$dir")"
@@ -15,4 +15,4 @@ while IFS= read -d $'\0' -r dir ; do
   else
     echo "$d"
   fi
-done < <(find "${HSVM_ROOT}/ghcs" -maxdepth 1 -type d -print0)
+done < <(find "${GHCS_PATH}" -maxdepth 1 -type d -print0)

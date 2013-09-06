@@ -13,17 +13,17 @@ normalize() {
 
 CURRENT_VERSION=
 
-if [ -s "${HSVM_ROOT}/version" ]; then
-  CURRENT_VERSION="$(cat "${HSVM_ROOT}/version")"
+if [ -s "${VERSION_FILE}" ]; then
+  CURRENT_VERSION="$(<"${_VERSION_FILE}")"
 else
   echo "hsvm: no version specified; try \`hsvm shell some-version'" >&2
   exit 1
 fi
 
-GHC_ROOT="${HSVM_ROOT}/ghcs/${CURRENT_VERSION}"
+GHC_ROOT="${GHCS_PATH}/${CURRENT_VERSION}"
 
 [ -d "${GHC_ROOT}" ] || {
-  echo "${HSVM_ROOT}/version refers to nonexistent GHC version ${CURRENT_VERSION}." >&2
+  echo "${VERSION_FILE} refers to nonexistent GHC version ${CURRENT_VERSION}." >&2
   exit 1
 }
 

@@ -85,6 +85,9 @@ for plugin_hook in "${HSVM_ROOT}/plugins/"*/etc/hsvm.d; do
 done
 export HSVM_HOOK_PATH="$hook_path"
 
+export GHCS_PATH="${HSVM_ROOT}/ghcs"
+export VERSION_FILE="${HSVM_ROOT}/version"
+
 shopt -u nullglob
 
 command="$1"

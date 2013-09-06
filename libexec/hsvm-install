@@ -45,7 +45,7 @@ cached_file() {
 
 install() {
   unpack_dir="$(mktemp -d /tmp/ghc)"
-  install_dir="${HSVM_ROOT}/ghcs/${version}-${arch}"
+  install_dir="${GHCS_PATH}/${version}-${arch}"
   binary="$(cached_file)"
 
   mkdir -p "$install_dir"

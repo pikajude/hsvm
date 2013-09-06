@@ -12,8 +12,8 @@ elif [ "$1" = "$(hsvm current)" ]; then
   echo "hsvm: \`$1' is currently in use, try switching GHCs first" >&2
   exit 1
 else
-  if [ -d "${HSVM_ROOT}/ghcs/$1" ]; then
-    rm -rf "${HSVM_ROOT}/ghcs/$1"
+  if [ -d "${GHCS_PATH}/$1" ]; then
+    rm -rf "${GHCS_PATH}/$1"
     echo "hsvm: removed ghc-$1"
   else
     echo "hsvm: no such version \`$1'" >&2

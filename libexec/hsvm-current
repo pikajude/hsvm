@@ -5,9 +5,9 @@
 set -e
 [ -n "$HSVM_DEBUG" ] && set -x
 
-if [ -f "${HSVM_ROOT}/version" ]; then
-  cat "${HSVM_ROOT}/version"
+if [ -f "${VERSION_FILE}" ]; then
+  cat "${VERSION_FILE}"
 else
-  echo "hsvm: no version configure, try \`hsvm use'" >&2
+  echo "hsvm: no version configured, try \`hsvm use'" >&2
   exit 1
 fi

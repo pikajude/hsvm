@@ -6,11 +6,11 @@ set -e
 [ -n "$HSVM_DEBUG" ] && set -x
 
 set_version() {
-  if [ ! -d "${HSVM_ROOT}/ghcs/$1" ]; then
+  if [ ! -d "${GHCS_PATH}/$1" ]; then
     echo "hsvm: GHC $1 is not installed" >&2
     exit 1
   fi
-  echo "$1" > "${HSVM_ROOT}/version"
+  echo "$1" > "${VERSION_FILE}"
   hsvm rehash
 }
 
