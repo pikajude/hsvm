@@ -7,6 +7,7 @@ set -e
 
 case "$1" in
 install )
+  echo "HEAD"
   cat "$(dirname "$0")/../versions"
   ;;
 use | rm )

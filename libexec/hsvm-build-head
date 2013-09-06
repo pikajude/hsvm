@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Summary: Install GHC HEAD
+# Usage: hsvm build-head
+
+set -e
+[ -n "$HSVM_DEBUG" ] && set -x
+
+GIT="$(type -p git | head -1)"
+if [ -z "$GIT" ]; then
+  echo "hsvm: you need git to install GHC HEAD" >&2
+  exit 1
+fi
+
+PERL="$(type -p perl | head -1)"
+if [ -z "$PERL" ]; then
+  echo "hsvm: you need perl to install GHC HEAD" >&2
+  exit 1
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+  CORES="$(sysctl hw.ncpu | cut -d' ' -f2)"
+else
+  echo "hsvm: don't know how to get # cpus for OS $(uname), assuming 2." >&2
+  CORES=2
+fi
+
+clone() {
+  if [ ! -d "${HSVM_ROOT}/cache/git/.git" ]; then
+    mkdir -p "${HSVM_ROOT}/cache/git"
+    echo "cloning ghc.git..."
+    "$GIT" clone git://git.haskell.org/ghc.git "${HSVM_ROOT}/cache/git"
+  else
+    OLDPWD="$(pwd)"
+    cd "${HSVM_ROOT}/cache/git"
+    echo "updating ghc.git..."
+    "$GIT" pull origin master
+    cd "$OLDPWD"
+  fi
+}
+
+install() {
+  prefix="${GHCS_PATH}/7.7.$(date +%Y%m%d)"
+  mkdir -p "$prefix"
+  cd "${HSVM_ROOT}/cache/git"
+  ./sync-all get
+  "$PERL" boot
+  ./configure "--prefix=$prefix"
+  make "-j${CORES}"
+  make install
+}
+
+clone
+install
+hsvm use "7.7.$(date +%Y%m%d)"

@@ -17,15 +17,17 @@ if [ -z "$version" ]; then
   exit 1
 fi
 
+if [ "$version" = "HEAD" ]; then
+  hsvm build-head
+  exit 0
+fi
+
 filename="ghc-${version}-${arch}-${HSVM_OS}.tar.bz2"
 url="http://www.haskell.org/ghc/dist/${version}/${filename}"
 
 find_url() {
   if [ "$(curl -I --silent --write-out "%{http_code}" "$url" 2>/dev/null | tail -1)" = "200" ]; then
     echo "$url"
-  else
-    echo "hsvm: no ghc version for ${version}-${arch}-${HSVM_OS}" >&2
-    exit 1
   fi
 }
 
@@ -37,16 +39,22 @@ cached_file() {
     mkdir -p "$cachepath"
   fi
   if [ ! -f "$cachepath/$filename" ]; then
-    echo "downloading GHC ${version} ${nicename}..." >&2
-    curl "$url" > "$cachepath/$filename"
+    u="$(find_url)"
+    if [ -z "$u" ]; then
+      echo "hsvm: no ghc version for ${version}-${arch}-${HSVM_OS}" >&2
+      exit 1
+    else
+      echo "downloading GHC ${version} ${nicename}..." >&2
+      curl "$(u)" > "$cachepath/$filename"
+    fi
   fi
   echo "$cachepath/$filename"
 }
 
 install() {
-  unpack_dir="$(mktemp -d /tmp/ghc)"
-  install_dir="${GHCS_PATH}/${version}-${arch}"
   binary="$(cached_file)"
+  unpack_dir="$(mktemp -d /tmp/ghc-XXXXXX)"
+  install_dir="${GHCS_PATH}/${version}-${arch}"
 
   mkdir -p "$install_dir"
 
