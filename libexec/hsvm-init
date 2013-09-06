@@ -2,8 +2,6 @@
 # Summary: Initialize hsvm
 # Usage: hsvm init
 
-echo "set -e"
 echo "export PATH=\"${HSVM_ROOT}/shims:\${PATH}\""
 echo "source \"$(dirname "$0")/../completions/hsvm.zsh\""
 echo "hsvm rehash"
-echo "set +e"
