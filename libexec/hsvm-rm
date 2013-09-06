@@ -8,13 +8,15 @@ set -e
 if [ -z "$1" ]; then
   echo "usage: hsvm rm version" >&2
   exit 1
-elif [ "$1" = "$(hsvm current)" ]; then
-  echo "hsvm: \`$1' is currently in use, try switching GHCs first" >&2
-  exit 1
 else
+  if [ "$1" = "$(hsvm current)" ]; then
+    removing_current="yes"
+  fi
   if [ -d "${GHCS_PATH}/$1" ]; then
     rm -rf "${GHCS_PATH}/$1"
     echo "hsvm: removed ghc-$1"
+    [ ! -z "$removing_current" ] && hsvm use "$(hsvm versions | tail -1)" 2>/dev/null
+    true
   else
     echo "hsvm: no such version \`$1'" >&2
     exit 1

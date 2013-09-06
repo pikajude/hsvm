@@ -50,10 +50,14 @@ install() {
 
   mkdir -p "$install_dir"
 
+  trap "rm -rf '$install_dir'" INT
+
+  echo "unpacking..." >&2
   tar xjf "$binary" -C "$unpack_dir" --strip-components 1
 
   OLDPWD="$(pwd)"
 
+  echo "installing..." >&2
   cd "$unpack_dir"
   ./configure "--prefix=$install_dir" >/dev/null
   make install >/dev/null
