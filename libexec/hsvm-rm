@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Summary: Remove a GHC version
+# Usage: hsvm rm version
+
+set -e
+[ -n "$HSVM_DEBUG" ] && set -x
+
+if [ -z "$1" ]; then
+  echo "usage: hsvm rm version" >&2
+  exit 1
+elif [ "$1" = "$(hsvm current)" ]; then
+  echo "hsvm: \`$1' is currently in use, try switching GHCs first" >&2
+  exit 1
+else
+  if [ -d "${HSVM_ROOT}/ghcs/$1" ]; then
+    rm -rf "${HSVM_ROOT}/ghcs/$1"
+    echo "hsvm: removed ghc-$1"
+  else
+    echo "hsvm: no such version \`$1'" >&2
+    exit 1
+  fi
+fi
+
+hsvm rehash

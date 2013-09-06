@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Summary: Refresh the hsvm symlinks.
+# Usage: hsvm rehash
+
+set -e
+[ -n "$HSVM_DEBUG" ] && set -x
+
+[ -d "${HSVM_ROOT}/shims" ] || mkdir -p "${HSVM_ROOT}/shims"
+
+normalize() {
+  basename "$1" | sed 's/-[0-9][^/]*$//'
+}
+
+CURRENT_VERSION=
+
+if [ -f "${HSVM_ROOT}/version" ]; then
+  CURRENT_VERSION="$(cat "${HSVM_ROOT}/version")"
+else
+  echo "hsvm: no version specified; try \`hsvm shell some-version'" >&2
+  exit 1
+fi
+
+GHC_ROOT="${HSVM_ROOT}/ghcs/${CURRENT_VERSION}"
+
+[ -d "${GHC_ROOT}" ] || {
+  echo "${HSVM_ROOT}/version refers to nonexistent GHC version ${CURRENT_VERSION}." >&2
+  exit 1
+}
+
+while IFS= read -d $'\0' -r f; do
+  ln -sf "$f" "${HSVM_ROOT}/shims/$(normalize "$f")"
+done < <(find "${GHC_ROOT}/bin" -type f -print0)

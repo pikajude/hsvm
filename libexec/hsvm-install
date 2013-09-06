@@ -1,13 +1,68 @@
 #!/usr/bin/env bash
 # Summary: Install a GHC, and maybe cabal-install.
-# Usage: hsvm install ghc-version
+# Usage: hsvm install ghc-version [--32-bit]
 
 set -e
 [ -n "$HSVM_DEBUG" ] && set -x
 
 version="$1"
+if [ "$2" = "--32-bit" ]; then
+  arch="i386"
+else
+  arch="x86_64"
+fi
 
 if [ -z "$version" ]; then
-  echo "usage: hsvm install ghc-version" >&2
+  echo "usage: hsvm install ghc-version [--32-bit]" >&2
   exit 1
 fi
+
+filename="ghc-${version}-${arch}-${HSVM_OS}.tar.bz2"
+url="http://www.haskell.org/ghc/dist/${version}/${filename}"
+
+find_url() {
+  if [ "$(curl -I --silent --write-out "%{http_code}" "$url" 2>/dev/null | tail -1)" = "200" ]; then
+    echo "$url"
+  else
+    echo "hsvm: no ghc version for ${version}-${arch}-${HSVM_OS}" >&2
+    exit 1
+  fi
+}
+
+cached_file() {
+  cachepath="$HSVM_ROOT/cache/tarballs"
+  nicename="64-bit"
+  [ "$arch" == "i386" ] && nicename="32-bit"
+  if [ ! -d "$cachepath" ]; then
+    mkdir -p "$cachepath"
+  fi
+  if [ ! -f "$cachepath/$filename" ]; then
+    echo "downloading GHC ${version} ${nicename}..." >&2
+    curl "$url" > "$cachepath/$filename"
+  fi
+  echo "$cachepath/$filename"
+}
+
+install() {
+  unpack_dir="$(mktemp -d /tmp/ghc)"
+  install_dir="${HSVM_ROOT}/ghcs/${version}-${arch}"
+  binary="$(cached_file)"
+
+  mkdir -p "$install_dir"
+
+  tar xjf "$binary" -C "$unpack_dir" --strip-components 1
+
+  OLDPWD="$(pwd)"
+
+  cd "$unpack_dir"
+  ./configure "--prefix=$install_dir" >/dev/null
+  make install >/dev/null
+
+  cd "$OLDPWD"
+
+  rm -rf "$unpack_dir"
+}
+
+install
+
+hsvm use "${version}-${arch}"

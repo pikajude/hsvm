@@ -3,6 +3,20 @@
 set -e
 export -n CDPATH
 
+case "$(uname)" in
+Darwin )
+    HSVM_OS="apple-darwin"
+    ;;
+Linux )
+    HSVM_OS="unknown-linux"
+    ;;
+* )
+    echo "Unhandled OS $(uname). Exiting." >&2
+    exit 1
+    ;;
+esac
+export HSVM_OS
+
 if [ "$1" = "--debug" ]; then
     export HSVM_DEBUG=1
     shift

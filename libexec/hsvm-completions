@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Summary: Return completions for commands
+# Usage: hsvm completions partial input
+
+set -e
+[ -n "$HSVM_DEBUG" ] && set -x
+
+case "$1" in
+install )
+  cat "${HSVM_DIR}/versions"
+  ;;
+use | rm )
+  for dir in "${HSVM_ROOT}/ghcs/"*; do
+    echo "$(basename "$dir")"
+  done
+  ;;
+esac
