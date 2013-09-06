@@ -13,7 +13,7 @@ normalize() {
 
 CURRENT_VERSION=
 
-if [ -f "${HSVM_ROOT}/version" ]; then
+if [ -s "${HSVM_ROOT}/version" ]; then
   CURRENT_VERSION="$(cat "${HSVM_ROOT}/version")"
 else
   echo "hsvm: no version specified; try \`hsvm shell some-version'" >&2
