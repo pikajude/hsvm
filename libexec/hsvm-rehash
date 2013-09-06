@@ -29,4 +29,4 @@ GHC_ROOT="${GHCS_PATH}/${CURRENT_VERSION}"
 
 while IFS= read -d $'\0' -r f; do
   ln -sf "$f" "${HSVM_ROOT}/shims/$(normalize "$f")"
-done < <(find "${GHC_ROOT}/bin" -type f -print0)
+done < <(find "${GHC_ROOT}/bin" -print0 -mindepth 1)
