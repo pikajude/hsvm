@@ -41,10 +41,8 @@ find_url() {
   fi
 }
 
-cached_file() {
+cache_file() {
   cachepath="$HSVM_ROOT/cache/tarballs"
-  nicename="64-bit"
-  [ "$arch" == "i386" ] && nicename="32-bit"
   if [ ! -d "$cachepath" ]; then
     mkdir -p "$cachepath"
   fi
@@ -57,11 +55,11 @@ cached_file() {
       quietly curl "$u" --output "$cachepath/$filename"
     fi
   fi
-  echo "$cachepath/$filename"
 }
 
 install() {
-  binary="$(cached_file)"
+  cache_file
+  binary="${HSVM_ROOT}/cache/tarballs/$filename"
   unpack_dir="$(mktemp -d /tmp/ghc-XXXXXX)"
   install_dir="${GHCS_PATH}/${version}-${arch}"
 
