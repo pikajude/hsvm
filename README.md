@@ -1,7 +1,9 @@
 hsvm
 ====
 
-No easy-install yet, so you'll need to clone this repo wherever you wish and add bin/ to your $PATH. Then, in your .{bash,zsh}rc, add
+hsvm is a tool that allows you to have multiple GHC versions installed and easily switch between them.
+
+there is no easy-install yet, so you'll need to clone this repo wherever you wish and add the `bin/` directory to your $PATH. then, in your .{bash,zsh}rc, add
 
     eval "$(hsvm init)"
 
