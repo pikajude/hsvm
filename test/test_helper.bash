@@ -6,4 +6,5 @@ hsvmpath () {
 }
 
 export PATH="$(hsvmpath):$PATH"
+echo "$PATH"
 eval "$(hsvm init -)"
