@@ -5,12 +5,32 @@
 set -e
 [ -n "$HSVM_DEBUG" ] && set -x
 
+default_arch () {
+  possibles=($(find "$GHCS_PATH" -name "$1"* -type d -exec basename {} \;))
+  case "${#possibles[@]}" in
+    1) echo "${possibles[0]}" ;;
+    2)
+      echo >&2 "hsvm: multiple architectures present for version \`$1'; try ${1}-i386 or ${1}-x86_64"
+      exit 1
+      ;;
+    *) echo >&2 "hsvm: more than 2 arches for version \`$1' found, something is wrong"
+      exit 1
+      ;;
+  esac
+}
+
 set_version() {
   if [ ! -d "${GHCS_PATH}/$1" ]; then
-    echo "hsvm: GHC $1 is not installed" >&2
-    exit 1
+    ver="$(default_arch "$1")"
+    if [ -z "$ver" ]; then
+      echo "hsvm: GHC $ver is not installed" >&2
+      exit 1
+    else
+      echo "$ver" > "${VERSION_FILE}"
+    fi
+  else
+    echo "$1" > "${VERSION_FILE}"
   fi
-  echo "$1" > "${VERSION_FILE}"
   hsvm rehash
 }
 
