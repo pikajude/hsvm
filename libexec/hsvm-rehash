@@ -16,7 +16,7 @@ CURRENT_VERSION=
 if [ -s "${VERSION_FILE}" ]; then
   CURRENT_VERSION="$(<"${VERSION_FILE}")"
 else
-  echo "hsvm: no version specified; try \`hsvm shell some-version'" >&2
+  echo "hsvm: no version configured, try \`hsvm use'" >&2
   exit 1
 fi
 

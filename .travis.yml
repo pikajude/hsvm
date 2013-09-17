@@ -6,4 +6,6 @@ install:
   - cd bats && sudo ./install.sh /usr/local && cd -
 
 script:
+  - export PATH="${TRAVIS_BUILD_DIR}/bin:$PATH"
+  - hsvm install 7.6.3
   - bats test/
