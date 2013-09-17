@@ -16,8 +16,13 @@ CURRENT_VERSION=
 if [ -s "${VERSION_FILE}" ]; then
   CURRENT_VERSION="$(<"${VERSION_FILE}")"
 else
-  echo "hsvm: no version configured, try \`hsvm use'" >&2
-  exit 1
+  if [ "$(ls "${HSVM_ROOT}/ghcs" | wc -l | tr -d ' ')" = "0" ]; then
+    echo "hsvm: you have no GHCs installed! try \`hsvm install 7.6.3'" >&2
+    exit 0
+  else
+    echo "hsvm: no version configured, try \`hsvm use'" >&2
+    exit 1
+  fi
 fi
 
 GHC_ROOT="${GHCS_PATH}/${CURRENT_VERSION}"
