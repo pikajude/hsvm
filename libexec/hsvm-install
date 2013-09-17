@@ -71,7 +71,7 @@ install() {
 
   flags=
 
-  [ "$arch" == "i386" && -d /usr/lib32 ] && flags="$flags --with-gmp-libraries=/usr/lib32"
+  [ "$arch" = "i386" ] && test -d /usr/lib32 && flags="$flags --with-gmp-libraries=/usr/lib32"
 
   mkdir -p "$install_dir"
   trap "rm -rf '$install_dir'" INT
