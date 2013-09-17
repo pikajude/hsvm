@@ -1,10 +1,2 @@
-hsvmpath () {
-  cd "$(dirname "$0")"
-  PW="$(pwd -P)/../bin"
-  cd -
-  echo "$PW"
-}
-
-export PATH="$(hsvmpath):$PATH"
-echo "$PATH"
+export PATH="${TRAVIS_BUILD_DIR}/bin:$PATH"
 eval "$(hsvm init -)"
