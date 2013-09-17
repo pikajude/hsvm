@@ -1,6 +1,7 @@
 language: c
 before_install:
   - git clone https://github.com/sstephenson/bats bats
+  - sudo apt-get install -q -y libgmp3-dev
 
 install:
   - cd bats && sudo ./install.sh /usr/local && cd -
