@@ -79,11 +79,15 @@ for plugin_bin in "${HSVM_ROOT}/plugins/"*/bin; do
 done
 export PATH="${bin_path}:${PATH}"
 
+export HSVM_LIB="$(abs_dirname "$0")/../lib"
+
 hook_path="${HSVM_HOOK_PATH}:${HSVM_ROOT}/hsvm.d:/usr/local/etc/hsvm.d:/etc/hsvm.d:/usr/lib/hsvm/hooks"
 for plugin_hook in "${HSVM_ROOT}/plugins/"*/etc/hsvm.d; do
     hook_path="${hook_path}:${plugin_path}"
 done
 export HSVM_HOOK_PATH="$hook_path"
+
+mkdir -p "${HSVM_ROOT}/log"
 
 export GHCS_PATH="${HSVM_ROOT}/ghcs"
 export VERSION_FILE="${HSVM_ROOT}/version"

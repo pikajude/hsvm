@@ -1,9 +1,24 @@
 #!/usr/bin/env bash
 # Summary: Install GHC HEAD
-# Usage: hsvm build-head
+# Usage: hsvm build-head [-v|--verbose]
 
 set -e
 [ -n "$HSVM_DEBUG" ] && set -x
+source "$HSVM_LIB/_hsvm-functions"
+
+VERBOSE=0
+DATE=$(date +%Y%m%d)
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --verbose|-v) VERBOSE=1 ;;
+    HEAD) ;;
+    -j) shift; CORES=$1 ;;
+    -j*) CORES="${1:2}" ;;
+    *) echo >&2 "Unknown argument $1, exiting."; exit 1 ;;
+  esac
+  shift
+done
 
 GIT="$(type -p git | head -1)"
 if [ -z "$GIT" ]; then
@@ -17,38 +32,39 @@ if [ -z "$PERL" ]; then
   exit 1
 fi
 
-if [ "$(uname)" = "Darwin" ]; then
-  CORES="$(sysctl hw.ncpu | cut -d' ' -f2)"
-else
-  echo "hsvm: don't know how to get # cpus for OS $(uname), assuming 2." >&2
-  CORES=2
+if [ -z "$CORES" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    CORES="$(sysctl hw.ncpu | cut -d' ' -f2)"
+  else
+    echo "hsvm: don't know how to get # cpus for OS $(uname), assuming 2." >&2
+    echo "hsvm: control # of cores used with -j#" >&2
+    CORES=2
+  fi
 fi
 
 clone() {
   if [ ! -d "${HSVM_ROOT}/cache/git/.git" ]; then
     mkdir -p "${HSVM_ROOT}/cache/git"
-    echo "cloning ghc.git..."
-    "$GIT" clone git://git.haskell.org/ghc.git "${HSVM_ROOT}/cache/git"
+    quietly "$GIT" clone git://git.haskell.org/ghc.git "${HSVM_ROOT}/cache/git"
   else
     OLDPWD="$(pwd)"
     cd "${HSVM_ROOT}/cache/git"
-    echo "updating ghc.git..."
-    "$GIT" pull origin master
+    quietly "$GIT" pull origin master
     cd "$OLDPWD"
   fi
 }
 
 install() {
-  prefix="${GHCS_PATH}/7.7.$(date +%Y%m%d)"
+  prefix="${GHCS_PATH}/7.7.$DATE"
   mkdir -p "$prefix"
   cd "${HSVM_ROOT}/cache/git"
-  ./sync-all get
-  "$PERL" boot
-  ./configure "--prefix=$prefix"
-  make "-j${CORES}"
-  make install
+  quietly ./sync-all get
+  quietly "$PERL" boot
+  quietly ./configure "--prefix=$prefix"
+  quietly make "-j${CORES}"
+  quietly make install
 }
 
 clone
 install
-hsvm use "7.7.$(date +%Y%m%d)"
+hsvm use "7.7.$DATE"

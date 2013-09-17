@@ -1,0 +1,20 @@
+#!/bin/bash
+
+SEC=$(date +%s)
+export SEC
+
+quietly () {
+  local cmd="$(shift)"
+  if [ "$VERBOSE" -eq "1" ]; then
+    $cmd $@
+  else
+    echo "==>$cmd $@"
+    set +e
+    $cmd $@ >"${HSVM_ROOT}/log/build-${SEC}-out.log" 2>"${HSVM_ROOT}/log/build-${SEC}-error.log"
+    if [ "$?" -ne "0" ]; then
+      tail -20 "${HSVM_ROOT}/log/build-${SEC}-error.log"
+      exit 1
+    fi
+    set -e
+  fi
+}

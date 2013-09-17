@@ -1,24 +1,34 @@
 #!/usr/bin/env bash
 # Summary: Install a GHC, and maybe cabal-install.
-# Usage: hsvm install ghc-version [--32-bit]
+# Usage: hsvm install ghc-version [--32-bit|-3|--64-bit|-6] [-v|--verbose]
 
 set -e
 [ -n "$HSVM_DEBUG" ] && set -x
+source "$HSVM_LIB/_hsvm-functions"
 
-version="$1"
-if [ "$2" = "--32-bit" ]; then
-  arch="i386"
-else
-  arch="x86_64"
-fi
+arch="x86_64"
+VERBOSE=0
+ARGS="$@"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --32-bit|-3) arch="i386" ;;
+    --64-bit|-6) arch="x86_64" ;;
+    --verbose|-v) VERBOSE=1 ;;
+    -j) shift ;;
+    -j*) ;;
+    *) version="$1" ;;
+  esac
+  shift
+done
 
 if [ -z "$version" ]; then
-  echo "usage: hsvm install ghc-version [--32-bit]" >&2
+  echo "usage: hsvm install ghc-version [--32-bit|-3|--64-bit|-6] [-q|--quiet]" >&2
   exit 1
 fi
 
 if [ "$version" = "HEAD" ]; then
-  hsvm build-head
+  hsvm build-head $ARGS
   exit 0
 fi
 
@@ -60,15 +70,13 @@ install() {
 
   trap "rm -rf '$install_dir'" INT
 
-  echo "unpacking..." >&2
-  tar xjf "$binary" -C "$unpack_dir" --strip-components 1
+  quietly tar xjf "$binary" -C "$unpack_dir" --strip-components 1
 
   OLDPWD="$(pwd)"
 
-  echo "installing..." >&2
   cd "$unpack_dir"
-  ./configure "--prefix=$install_dir" >/dev/null
-  make install >/dev/null
+  quietly ./configure "--prefix=$install_dir"
+  quietly make install
 
   cd "$OLDPWD"
 
