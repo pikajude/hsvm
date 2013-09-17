@@ -69,8 +69,11 @@ install() {
   unpack_dir="$(mktemp -d /tmp/ghc-XXXXXX)"
   install_dir="${GHCS_PATH}/${version}-${arch}"
 
-  mkdir -p "$install_dir"
+  flags=
 
+  [ "$arch" == "i386" && -d /usr/lib32 ] && flags="$flags --with-gmp-libraries=/usr/lib32"
+
+  mkdir -p "$install_dir"
   trap "rm -rf '$install_dir'" INT
 
   quietly tar xjf "$binary" -C "$unpack_dir" --strip-components 1
