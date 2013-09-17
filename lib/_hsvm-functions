@@ -5,10 +5,10 @@ export SEC
 
 quietly () {
   local cmd="$(shift)"
+  echo "==>$cmd $@"
   if [ "$VERBOSE" -eq "1" ]; then
     $cmd $@
   else
-    echo "==>$cmd $@"
     set +e
     $cmd $@ >"${HSVM_ROOT}/log/build-${SEC}-out.log" 2>"${HSVM_ROOT}/log/build-${SEC}-error.log"
     if [ "$?" -ne "0" ]; then
