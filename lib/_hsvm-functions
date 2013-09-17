@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SEC=$(date +%s)
+SEC=$(date +%Y%m%d%H%M%S)
 export SEC
 
 quietly () {
