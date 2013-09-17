@@ -55,7 +55,7 @@ cached_file() {
       exit 1
     else
       echo "downloading GHC ${version} ${nicename}..." >&2
-      curl "$(u)" > "$cachepath/$filename"
+      curl "$u" > "$cachepath/$filename"
     fi
   fi
   echo "$cachepath/$filename"
