@@ -3,7 +3,7 @@ before_install:
   - git clone https://github.com/sstephenson/bats bats
 
 install:
-  - cd bats && sudo ./install.sh /usr/local
+  - cd bats && sudo ./install.sh /usr/local && cd -
 
 script:
   - bats test/
