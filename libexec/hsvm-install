@@ -22,6 +22,12 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
+CURL="$(type -p curl | head -1)"
+if [ -z "$CURL" ]; then
+  echo "hsvm: curl needed to install GHCs" >&2
+  exit 1
+fi
+
 if [ -z "$version" ]; then
   echo "usage: hsvm install ghc-version [--32-bit|-3|--64-bit|-6] [-q|--quiet]" >&2
   exit 1
@@ -36,7 +42,7 @@ filename="ghc-${version}-${arch}-${HSVM_OS}.tar.bz2"
 url="http://www.haskell.org/ghc/dist/${version}/${filename}"
 
 find_url() {
-  if [ "$(curl -I --silent --write-out "%{http_code}" "$url" 2>/dev/null | tail -1)" = "200" ]; then
+  if [ "$("$CURL" -I --silent --write-out "%{http_code}" "$url" 2>/dev/null | tail -1)" = "200" ]; then
     echo "$url"
   fi
 }
@@ -52,7 +58,7 @@ cache_file() {
       echo "hsvm: no ghc version for ${version}-${arch}-${HSVM_OS}" >&2
       exit 1
     else
-      quietly curl "$u" --output "$cachepath/$filename"
+      quietly "$CURL" "$u" --output "$cachepath/$filename"
     fi
   fi
 }
