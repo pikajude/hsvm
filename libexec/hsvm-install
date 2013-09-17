@@ -84,6 +84,8 @@ install() {
   cd "$OLDPWD"
 
   rm -rf "$unpack_dir"
+
+  echo "GHC $version installed successfully"
 }
 
 install
