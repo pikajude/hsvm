@@ -1,5 +1,6 @@
 hsvm
 ====
+[![Build status](https://secure.travis-ci.org/joelteon/hsvm.png)](http://travis-ci.org/joelteon/hsvm)
 
 hsvm is a tool that allows you to have multiple GHC versions installed and easily switch between them.
 
