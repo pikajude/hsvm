@@ -13,7 +13,7 @@ and you're ready to hsvm!
 fish users
 ----------
 
-    eval "$(hsvm init --fish)"
+    eval (hsvm init --fish)
 
 instead.
 
