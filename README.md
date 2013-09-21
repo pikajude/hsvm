@@ -38,7 +38,7 @@ commands
 
 `hsvm rehash` refreshes all your symlinks. you should rarely/never need to do this yourself. this command takes its name from `rbenv rehash`, but since Haskell is a compiled language, `rehash` has an entirely different purpose.
 
-`hsvm init` prints out several lines of bash/zsh which, when executed, set up your hsvm environment. you should put `eval "$(hsvm init)"` in your .bashrc or .zshrc.
+`hsvm init` prints out a few lines of shell script which, when executed, set up your hsvm environment. you should put `eval "$(hsvm init)"` in your .bashrc or .zshrc. fish users should use `eval (hsvm init --fish)`.
 
 `hsvm completions` lists all possible completions for a command. you should also rarely need to use this yourself.
 
