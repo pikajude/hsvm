@@ -10,6 +10,13 @@ there is no easy-install yet, so you'll need to clone this repo wherever you wis
 
 and you're ready to hsvm!
 
+fish users
+----------
+
+    eval "$(hsvm init --fish)"
+
+instead.
+
 commands
 --------
 
