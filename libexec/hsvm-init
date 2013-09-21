@@ -2,6 +2,12 @@
 # Summary: Initialize hsvm
 # Usage: hsvm init
 
-echo "export PATH=\"${HSVM_ROOT}/shims:\${PATH}\""
-echo "source \"$(dirname "$0")/../completions/hsvm.zsh\""
+[ "$1" == "--fish" ] && FISH=1
+
+if [ -z "$FISH" ]; then
+  echo "export PATH=\"${HSVM_ROOT}/shims:\${PATH}\""
+  echo "source \"$(dirname "$0")/../completions/hsvm.zsh\""
+else
+  echo "set PATH \$PATH ${HSVM_ROOT}/shims"
+fi
 echo "hsvm rehash"
